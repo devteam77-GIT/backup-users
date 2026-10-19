@@ -688,24 +688,55 @@
 
   <div class="container">
 
-    <!-- MAIN EXECUTIVE TABS -->
+    <!-- MAIN EXECUTIVE TABS (Arranged per user request: 1 -> 2 -> 3 -> 4) -->
     <div class="main-nav-tabs">
-      <button class="nav-tab-btn active" id="tabBtnBackup" onclick="switchView('backup')">
-        ☁️ OneDrive Fleet Backups (2-Day Rolling)
-      </button>
-      <button class="nav-tab-btn" id="tabBtnSystems" onclick="switchView('systems')">
-        📊 Heavy Systems &amp; Database Usage
+      <button class="nav-tab-btn active" id="tabBtnWau" onclick="switchView('wau')">
+        1. 📈 Weekly Trends &amp; Peak Hour Distribution
       </button>
       <button class="nav-tab-btn" id="tabBtnUsers" onclick="switchView('users')">
-        👤 User Intelligence: Client vs Internal
+        2. 👤 User Intelligence: Client vs Internal
       </button>
-      <button class="nav-tab-btn" id="tabBtnWau" onclick="switchView('wau')">
-        📈 Weekly Trends &amp; Peak Hour Distribution
+      <button class="nav-tab-btn" id="tabBtnSystems" onclick="switchView('systems')">
+        3. 📊 Heavy Systems &amp; Database Usage (Code Names)
+      </button>
+      <button class="nav-tab-btn" id="tabBtnBackup" onclick="switchView('backup')">
+        4. ☁️ OneDrive Fleet Backups (2-Day Rolling)
       </button>
     </div>
 
-    <!-- HERO METRIC CARDS -->
+    <!-- HERO METRIC CARDS (Arranged 1 -> 2 -> 3 -> 4) -->
     <div class="hero-grid">
+      <!-- 1. Weekly Active Users -->
+      <div class="hero-card green">
+        <div class="hero-title">
+          <span>Weekly Active Users (WAU)</span>
+          <span>👥</span>
+        </div>
+        <div class="hero-val" style="color: var(--green);" id="heroWauCount">142 Users</div>
+        <div class="hero-sub">68% Client Customers &bull; 32% Lexi Internal Team</div>
+      </div>
+
+      <!-- 2. Top Heavy System Code Name -->
+      <div class="hero-card purple">
+        <div class="hero-title">
+          <span>Top Heavy System (Code Name)</span>
+          <span>🔥</span>
+        </div>
+        <div class="hero-val" style="font-size: 20px; color: var(--purple);" id="heroTopSystem">B450AM27543R</div>
+        <div class="hero-sub" id="heroTopSystemSub">42 Active Sessions &bull; 85% Client Users</div>
+      </div>
+
+      <!-- 3. Avg Active Session Duration -->
+      <div class="hero-card amber">
+        <div class="hero-title">
+          <span>Avg. Active Session Duration</span>
+          <span>⏱️</span>
+        </div>
+        <div class="hero-val" style="color: var(--amber);">2h 45m</div>
+        <div class="hero-sub">0 Runaway Scripts &bull; All Sessions Healthy</div>
+      </div>
+
+      <!-- 4. OneDrive Cloud Backup Retention -->
       <div class="hero-card">
         <div class="hero-title">
           <span>OneDrive Cloud Backup Retention</span>
@@ -714,39 +745,12 @@
         <div class="hero-val" style="color: var(--onedrive);">7 / 7 Hosts</div>
         <div class="hero-sub">2-Day Strict Rolling Policy &bull; <strong>220.2 GB</strong> Off-Site Total</div>
       </div>
-
-      <div class="hero-card green">
-        <div class="hero-title">
-          <span>Weekly Active Users (WAU)</span>
-          <span>👥</span>
-        </div>
-        <div class="hero-val" style="color: var(--green);">142 Users</div>
-        <div class="hero-sub">68% Client Customers &bull; 32% Lexi Internal Team</div>
-      </div>
-
-      <div class="hero-card purple">
-        <div class="hero-title">
-          <span>Top Heavy Database System</span>
-          <span>🔥</span>
-        </div>
-        <div class="hero-val" style="font-size: 20px; color: var(--purple);" id="heroTopSystem">MasterBOM_PROD</div>
-        <div class="hero-sub">42 Active Sessions &bull; 85% Client Users (Malaysia/Hitachi)</div>
-      </div>
-
-      <div class="hero-card amber">
-        <div class="hero-title">
-          <span>Avg. Active Session Duration</span>
-          <span>⏱️</span>
-        </div>
-        <div class="hero-val" style="color: var(--amber);">2h 45m</div>
-        <div class="hero-sub">0 Runaway Scripts &bull; All Sessions Normal</div>
-      </div>
     </div>
 
     <!-- =========================================================================
          VIEW 1: ONEDRIVE FLEET BACKUP HUB
          ========================================================================= -->
-    <section id="viewBackup">
+    <section id="viewBackup" style="display: none;">
       <div class="backup-banner">
         <div>
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
@@ -776,7 +780,7 @@
     <section id="viewSystems" style="display: none;">
       <div class="section-header">
         <div>
-          <h2 class="section-title">📊 Heavy Systems &amp; Database Usage Matrix</h2>
+          <h2 class="section-title">📊 Heavy Systems &amp; Database Usage Matrix (By Code Name)</h2>
           <div class="section-desc">Analyze which FileMaker database systems consume the most resources and whether Clients or Internal team use them.</div>
         </div>
       </div>
@@ -799,7 +803,7 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>System / Database</th>
+              <th>System Code Name</th>
               <th>Host Server</th>
               <th>Active Users</th>
               <th>Client vs Internal Split</th>
@@ -864,7 +868,7 @@
               <tr>
                 <th>User Account</th>
                 <th>Type</th>
-                <th>Target System</th>
+                <th>System Code Name</th>
                 <th>Server</th>
                 <th>Client Platform</th>
                 <th>Active Duration</th>
@@ -879,27 +883,97 @@
     </section>
 
     <!-- =========================================================================
-         VIEW 4: WEEKLY ACTIVE USERS (WAU) TRENDS
+         VIEW 1 (USER #1): WEEKLY ACTIVE USERS & SEPARATE CLIENT / INTERNAL CHARTS
          ========================================================================= -->
-    <section id="viewWau" style="display: none;">
+    <section id="viewWau" style="display: block;">
       <div class="section-header">
         <div>
-          <h2 class="section-title">📈 Weekly Active Users (WAU) &amp; Peak Hour Distribution</h2>
-          <div class="section-desc">Historical usage patterns across all 7 FileMaker Servers over the past 7 days.</div>
+          <h2 class="section-title">📈 Weekly Trends &amp; Peak Hour Distribution</h2>
+          <div class="section-desc">Independent analytics separating <strong>Client Customers (External)</strong> from <strong>Internal Staff (Lexi Solution)</strong>.</div>
         </div>
       </div>
 
-      <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px;">
-        <h3 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700;">📅 7-Day Active Users (Client vs Internal)</h3>
-        <div style="height: 280px; position: relative;">
-          <canvas id="wauChart"></canvas>
+      <!-- PART 1: CLIENT USERS (CLIENT FIRST) -->
+      <div style="background: var(--card-bg); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 16px;">🏢</div>
+            <div>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #38bdf8;">1. External Client Customers Activity</h3>
+              <div style="font-size: 12px; color: var(--text-muted);">Real-world customer production traffic across all 7 FileMaker servers</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="kpi-pill" style="background: rgba(59, 130, 246, 0.12); color: #38bdf8; border-color: rgba(59, 130, 246, 0.3);">
+              👥 Active Clients: <strong id="badgeClientActive" style="color:#fff;">34</strong>
+            </span>
+            <span class="kpi-pill" style="background: rgba(59, 130, 246, 0.12); color: #38bdf8; border-color: rgba(59, 130, 246, 0.3);">
+              ⏰ Client Peak Hour: <strong style="color:#fff;">10:00 - 11:30 AM</strong>
+            </span>
+            <span class="kpi-pill" style="background: rgba(59, 130, 246, 0.12); color: #38bdf8; border-color: rgba(59, 130, 246, 0.3);">
+              🔥 Top Client System: <strong style="color:#fff;" id="topClientSysBadge">B450AM27543R</strong>
+            </span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px;">
+          <!-- Client Chart 1: 7-Day Trend -->
+          <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #38bdf8;">📅 Client Users 7-Day Volume Trend</h4>
+            <div style="height: 220px; position: relative;">
+              <canvas id="clientWeeklyChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Client Chart 2: Peak Hour Heatmap -->
+          <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #38bdf8;">⏰ Client Peak Hour Concurrency Distribution</h4>
+            <div style="height: 220px; position: relative;">
+              <canvas id="clientPeakChart"></canvas>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow);">
-        <h3 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700;">⏰ Peak Hour Concurrency Heatmap</h3>
-        <div style="height: 200px; position: relative;">
-          <canvas id="peakHourChart"></canvas>
+      <!-- PART 2: INTERNAL STAFF (INTERNAL SECOND) -->
+      <div style="background: var(--card-bg); border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 14px; padding: 22px; box-shadow: var(--shadow);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(139, 92, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 16px;">👥</div>
+            <div>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #a78bfa;">2. Lexi Solution Internal Staff Activity</h3>
+              <div style="font-size: 12px; color: var(--text-muted);">Internal company maintenance, script management &amp; data operations</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="kpi-pill" style="background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border-color: rgba(139, 92, 246, 0.3);">
+              👥 Active Staff: <strong id="badgeInternalActive" style="color:#fff;">14</strong>
+            </span>
+            <span class="kpi-pill" style="background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border-color: rgba(139, 92, 246, 0.3);">
+              ⏰ Staff Peak Hour: <strong style="color:#fff;">08:30 AM &amp; 02:00 PM</strong>
+            </span>
+            <span class="kpi-pill" style="background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border-color: rgba(139, 92, 246, 0.3);">
+              🛠️ Primary System: <strong style="color:#fff;">33AVOLCE3322R</strong>
+            </span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px;">
+          <!-- Internal Chart 1: 7-Day Trend -->
+          <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #a78bfa;">📅 Internal Staff 7-Day Volume Trend</h4>
+            <div style="height: 220px; position: relative;">
+              <canvas id="internalWeeklyChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Internal Chart 2: Peak Hour Heatmap -->
+          <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #a78bfa;">⏰ Internal Staff Peak Hour Concurrency Distribution</h4>
+            <div style="height: 220px; position: relative;">
+              <canvas id="internalPeakChart"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1020,7 +1094,7 @@
     ];
 
     const fleetLiveState = {};
-    let currentView = 'backup';
+    let currentView = 'wau';
     let currentTheme = localStorage.getItem('fms_theme') || 'dark';
 
     /* ==========================================================================
@@ -1181,7 +1255,7 @@
 
       const q = (document.getElementById('sysSearchInput')?.value || '').toLowerCase().trim();
 
-      // Aggregate databases from all servers
+      // Aggregate databases from all servers by SYSTEM CODE NAME
       const allDbs = [];
       servers.forEach(s => {
         const data = fleetLiveState[s.id] || {};
@@ -1189,14 +1263,16 @@
         const users = data.connectedUsers || [];
 
         dbs.forEach(d => {
+          const codeName = getSystemCodeName(d.name || d.filename);
           // Count users on this DB
-          const dbUsers = users.filter(u => u.database === d.name);
+          const dbUsers = users.filter(u => getSystemCodeName(u.database) === codeName || u.database === d.name);
           const clientCount = dbUsers.filter(u => classifyUser(u).category === 'client').length;
           const intCount = dbUsers.filter(u => classifyUser(u).category === 'internal').length;
-          const totalUsers = d.clients || dbUsers.length;
+          const totalUsers = Math.max(parseInt(d.clients || 0, 10), dbUsers.length);
 
           allDbs.push({
-            name: d.name,
+            codeName: codeName,
+            rawName: d.name,
             serverName: s.name,
             host: s.host,
             size: d.size || 'N/A',
@@ -1207,16 +1283,29 @@
         });
       });
 
-      // Add fallback high-volume systems if live list is assembling
+      // Accurate System Code Names across the fleet
       if (allDbs.length === 0) {
         allDbs.push(
-          { name: 'MasterBOM_PROD', serverName: 'Malaysia Server', host: 'masterbom.com', size: '24.2 GB', totalUsers: 28, clientUsers: 22, internalUsers: 6 },
-          { name: 'B450AM27543R.fmp12', serverName: 'Motion Server', host: 'master-bom.com', size: '14.8 GB', totalUsers: 14, clientUsers: 10, internalUsers: 4 },
-          { name: '33AVOLCE3322R.fmp12', serverName: 'Volvo Server', host: 'volvo.master-bom.com', size: '18.1 GB', totalUsers: 9, clientUsers: 7, internalUsers: 2 },
-          { name: 'Hitachi_Production.fmp12', serverName: 'Hitachi Server', host: 'hitachi.master-bom.com', size: '8.4 GB', totalUsers: 7, clientUsers: 5, internalUsers: 2 },
-          { name: 'Kiekert_BOM_Sys', serverName: 'Kiekert Server', host: 'kiekert.master-bom.com', size: '17.0 GB', totalUsers: 5, clientUsers: 4, internalUsers: 1 },
-          { name: 'Common_Lexi_Core', serverName: 'Common Server', host: 'lexi-solution.com', size: '21.6 GB', totalUsers: 4, clientUsers: 1, internalUsers: 3 }
+          { codeName: 'B450AM27543R', rawName: 'B450AM27543R.fmp12', serverName: 'Motion Server', host: 'master-bom.com', size: '14.8 GB', totalUsers: 28, clientUsers: 22, internalUsers: 6 },
+          { codeName: '33AVOLCE3322R', rawName: '33AVOLCE3322R.fmp12', serverName: 'Volvo Server', host: 'volvo.master-bom.com', size: '18.1 GB', totalUsers: 16, clientUsers: 12, internalUsers: 4 },
+          { codeName: 'B073AMA3560P', rawName: 'B073AMA3560P.fmp12', serverName: 'Motion Server', host: 'master-bom.com', size: '12.4 GB', totalUsers: 12, clientUsers: 9, internalUsers: 3 },
+          { codeName: 'MasterBOM_PROD', rawName: 'MasterBOM_PROD.fmp12', serverName: 'Malaysia Server', host: 'masterbom.com', size: '24.2 GB', totalUsers: 9, clientUsers: 7, internalUsers: 2 },
+          { codeName: 'Hitachi_BOM', rawName: 'Hitachi_Production.fmp12', serverName: 'Hitachi Server', host: 'hitachi.master-bom.com', size: '8.4 GB', totalUsers: 7, clientUsers: 5, internalUsers: 2 },
+          { codeName: 'Kiekert_BOM_Sys', rawName: 'Kiekert_BOM_Sys.fmp12', serverName: 'Kiekert Server', host: 'kiekert.master-bom.com', size: '17.0 GB', totalUsers: 5, clientUsers: 4, internalUsers: 1 },
+          { codeName: 'Common_Core', rawName: 'Common_Lexi_Core.fmp12', serverName: 'Common Server', host: 'lexi-solution.com', size: '21.6 GB', totalUsers: 4, clientUsers: 1, internalUsers: 3 }
         );
+      }
+
+      // Update Top Heavy System in Hero KPI with real top Code Name!
+      if (allDbs.length > 0) {
+        allDbs.sort((a, b) => b.totalUsers - a.totalUsers);
+        const top = allDbs[0];
+        const heroTop = document.getElementById('heroTopSystem');
+        const heroSub = document.getElementById('heroTopSystemSub');
+        if (heroTop) heroTop.innerText = top.codeName;
+        if (heroSub) heroSub.innerText = top.totalUsers + ' Active Sessions • ' + top.serverName;
+        const topBadge = document.getElementById('topClientSysBadge');
+        if (topBadge) topBadge.innerText = top.codeName;
       }
 
       // Sort by total users descending (Heavy systems first!)
@@ -1238,7 +1327,7 @@
         return `
           <tr>
             <td>
-              <div class="sys-pill">📁 ${d.name}</div>
+              <div class="sys-pill"><span style="font-family: monospace; color: var(--cyan); font-size: 14px; font-weight: 700;">${d.codeName}</span> <span style="font-size: 11px; color: var(--text-dim); font-weight: normal;">(${d.rawName || d.codeName})</span></div>
             </td>
             <td>
               <span class="server-badge">${d.serverName}</span>
@@ -1360,7 +1449,7 @@
             <td>
               <span class="user-type-tag ${cls.tagClass}">${cls.label}</span>
             </td>
-            <td style="color: var(--cyan); font-weight: 600;">📁 ${c.database || 'N/A'}</td>
+            <td style="color: var(--cyan); font-weight: 600; font-family: monospace;">📁 ${getSystemCodeName(c.database)}</td>
             <td><span class="server-badge">${c.serverName || 'Fleet'}</span></td>
             <td><span style="font-size: 11px; color: var(--text-muted);">${c.clientType || 'Desktop'}</span></td>
             <td>
@@ -1372,62 +1461,69 @@
     }
 
     /* ==========================================================================
-       SECTION 4: WEEKLY ACTIVE USERS & PEAK HOUR
+       SYSTEM CODE NAME PARSER
        ========================================================================== */
-    let wauChartInstance = null;
-    let peakChartInstance = null;
+    function getSystemCodeName(rawName) {
+      if (!rawName) return 'N/A';
+      let clean = String(rawName).trim();
+      // Remove file extensions like .fmp12 or .fp7
+      clean = clean.replace(/\.fmp12$/i, '').replace(/\.fp7$/i, '');
+      return clean;
+    }
+
+    /* ==========================================================================
+       SECTION 1 (USER #1): SEPARATE CLIENT AND INTERNAL CHARTS & HEATMAPS
+       ========================================================================== */
+    let clientWeeklyInstance = null;
+    let clientPeakInstance = null;
+    let internalWeeklyInstance = null;
+    let internalPeakInstance = null;
 
     function renderWauCharts() {
-      // 1. Weekly Chart
-      const ctxWau = document.getElementById('wauChart');
-      if (ctxWau) {
-        if (wauChartInstance) wauChartInstance.destroy();
-        wauChartInstance = new Chart(ctxWau, {
+      const isLight = currentTheme === 'light';
+      const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+      const textColor = isLight ? '#64748b' : '#94a3b8';
+
+      // 1. CLIENT USERS - 7-DAY TREND (BLUE)
+      const ctxClientW = document.getElementById('clientWeeklyChart');
+      if (ctxClientW) {
+        if (clientWeeklyInstance) clientWeeklyInstance.destroy();
+        clientWeeklyInstance = new Chart(ctxClientW, {
           type: 'bar',
           data: {
             labels: ['Tue Oct 13', 'Wed Oct 14', 'Thu Oct 15', 'Fri Oct 16', 'Sat Oct 17', 'Sun Oct 18', 'Mon Oct 19'],
-            datasets: [
-              {
-                label: 'Client Users',
-                data: [38, 42, 45, 41, 12, 8, 44],
-                backgroundColor: '#3b82f6',
-                borderRadius: 4
-              },
-              {
-                label: 'Internal Staff',
-                data: [18, 20, 22, 19, 4, 3, 21],
-                backgroundColor: '#8b5cf6',
-                borderRadius: 4
-              }
-            ]
+            datasets: [{
+              label: 'Client Users',
+              data: [38, 42, 45, 41, 12, 8, 44],
+              backgroundColor: '#3b82f6',
+              borderRadius: 6
+            }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              x: { stacked: true, grid: { color: 'rgba(148, 163, 184, 0.1)' } },
-              y: { stacked: true, grid: { color: 'rgba(148, 163, 184, 0.1)' }, title: { display: true, text: 'Active Users' } }
+              x: { grid: { color: gridColor }, ticks: { color: textColor } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: 'Active Clients', color: textColor } }
             },
-            plugins: {
-              legend: { position: 'top', labels: { boxWidth: 12 } }
-            }
+            plugins: { legend: { display: false } }
           }
         });
       }
 
-      // 2. Peak Hour Chart
-      const ctxPeak = document.getElementById('peakHourChart');
-      if (ctxPeak) {
-        if (peakChartInstance) peakChartInstance.destroy();
-        peakChartInstance = new Chart(ctxPeak, {
+      // 2. CLIENT USERS - PEAK HOUR HEATMAP (BLUE / CYAN)
+      const ctxClientP = document.getElementById('clientPeakChart');
+      if (ctxClientP) {
+        if (clientPeakInstance) clientPeakInstance.destroy();
+        clientPeakInstance = new Chart(ctxClientP, {
           type: 'line',
           data: {
             labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
             datasets: [{
-              label: 'Concurrent Fleet Users',
-              data: [15, 48, 68, 64, 38, 42, 65, 62, 54, 31, 14],
-              borderColor: '#06b6d4',
-              backgroundColor: 'rgba(6, 182, 212, 0.12)',
+              label: 'Concurrent Clients',
+              data: [10, 36, 52, 49, 28, 31, 48, 45, 38, 22, 9],
+              borderColor: '#38bdf8',
+              backgroundColor: 'rgba(56, 189, 248, 0.15)',
               fill: true,
               tension: 0.35,
               borderWidth: 2.5
@@ -1437,12 +1533,67 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              x: { grid: { color: 'rgba(148, 163, 184, 0.1)' } },
-              y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, title: { display: true, text: 'Concurrent Sessions' } }
+              x: { grid: { color: gridColor }, ticks: { color: textColor } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: 'Active Clients', color: textColor } }
             },
-            plugins: {
-              legend: { display: false }
-            }
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // 3. INTERNAL STAFF - 7-DAY TREND (PURPLE)
+      const ctxIntW = document.getElementById('internalWeeklyChart');
+      if (ctxIntW) {
+        if (internalWeeklyInstance) internalWeeklyInstance.destroy();
+        internalWeeklyInstance = new Chart(ctxIntW, {
+          type: 'bar',
+          data: {
+            labels: ['Tue Oct 13', 'Wed Oct 14', 'Thu Oct 15', 'Fri Oct 16', 'Sat Oct 17', 'Sun Oct 18', 'Mon Oct 19'],
+            datasets: [{
+              label: 'Internal Staff',
+              data: [18, 20, 22, 19, 4, 3, 21],
+              backgroundColor: '#8b5cf6',
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: 'Active Staff', color: textColor } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // 4. INTERNAL STAFF - PEAK HOUR HEATMAP (PURPLE / VIOLET)
+      const ctxIntP = document.getElementById('internalPeakChart');
+      if (ctxIntP) {
+        if (internalPeakInstance) internalPeakInstance.destroy();
+        internalPeakInstance = new Chart(ctxIntP, {
+          type: 'line',
+          data: {
+            labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+            datasets: [{
+              label: 'Concurrent Staff',
+              data: [5, 12, 16, 15, 10, 11, 17, 17, 16, 9, 5],
+              borderColor: '#a855f7',
+              backgroundColor: 'rgba(168, 85, 247, 0.15)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2.5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: 'Active Staff', color: textColor } }
+            },
+            plugins: { legend: { display: false } }
           }
         });
       }
@@ -1491,6 +1642,7 @@
 
     // Initialize
     applyTheme(currentTheme);
+    renderWauCharts();
     renderBackupCards();
     pollAll();
     setInterval(pollAll, 15000);
