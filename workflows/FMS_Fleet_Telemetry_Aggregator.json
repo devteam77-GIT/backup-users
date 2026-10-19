@@ -1,0 +1,139 @@
+{
+  "name": "FMS Fleet Telemetry Aggregator & WAU Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "fms-fleet-telemetry-aggregator",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "id": "aggregator-webhook",
+      "name": "Fleet Aggregator Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "fms-fleet-telemetry-aggregator"
+    },
+    {
+      "parameters": {
+        "jsCode": "const endpoints = [\n  { id: 'common', name: 'Common Server', host: 'lexi-solution.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-common-dashboard' },\n  { id: 'malaysia', name: 'Malaysia Server', host: 'masterbom.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-malaysia-dashboard' },\n  { id: 'motion', name: 'Motion Server', host: 'master-bom.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-motion-dashboard' },\n  { id: 'volvo', name: 'Volvo Server', host: 'volvo.master-bom.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-volvo-dashboard' },\n  { id: 'hitachi', name: 'Hitachi Server', host: 'hitachi.master-bom.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-live-dashboard' },\n  { id: 'kiekert', name: 'Kiekert Server', host: 'kiekert.master-bom.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-kiekert-dashboard' },\n  { id: 'demo', name: 'Demo Server', host: 'demo.master-bom.com', url: 'https://fms.n8n.lexisolution.com/webhook/fms-demo-dashboard' }\n];\n\nreturn endpoints.map(e => ({ json: e }));"
+      },
+      "id": "generate-server-list",
+      "name": "Generate Server Endpoints",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "fetch-server-telemetry",
+      "name": "Fetch Server Telemetry",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        300
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = {};\nlet totalOnline = 0;\nlet totalSessions = 0;\nlet allUsers = [];\nlet allDatabases = [];\n\nfor (const item of items) {\n  const data = item.json;\n  const serverId = item.json.id || 'unknown';\n  if (data && data.metrics) {\n    totalOnline++;\n    totalSessions += parseInt(data.metrics.sessions || 0, 10);\n    results[serverId] = data;\n    if (data.connectedUsers) {\n      allUsers.push(...data.connectedUsers);\n    }\n    if (data.databases) {\n      allDatabases.push(...data.databases);\n    }\n  } else {\n    results[serverId] = { status: 'OFFLINE' };\n  }\n}\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    fleetOverview: {\n      onlineCount: totalOnline,\n      totalServers: items.length,\n      totalActiveSessions: totalSessions\n    },\n    servers: results,\n    connectedUsers: allUsers,\n    databases: allDatabases\n  }\n}];"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "respond-aggregator",
+      "name": "Respond Aggregator Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Fleet Aggregator Webhook": {
+      "main": [
+        [
+          {
+            "node": "Generate Server Endpoints",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Server Endpoints": {
+      "main": [
+        [
+          {
+            "node": "Fetch Server Telemetry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Server Telemetry": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Respond Aggregator Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

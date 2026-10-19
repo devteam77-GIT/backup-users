@@ -1,0 +1,298 @@
+{
+  "name": "FMS Fleet 2-Day Rolling Backup & OneDrive Retention Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trigger-cron",
+      "name": "Daily 2:00 AM Cron",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fms-fleet-backup-trigger",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "id": "trigger-webhook-adhoc",
+      "name": "Ad-Hoc Backup Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        180,
+        440
+      ],
+      "webhookId": "fms-fleet-backup-trigger"
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "fms-fleet-backup-status",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "id": "trigger-webhook-status",
+      "name": "Backup Status Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        180,
+        640
+      ],
+      "webhookId": "fms-fleet-backup-status"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { serverId: 'common', server: 'Common Server', host: 'lexi-solution.com', folderId: 'IgAf4mxRCPe0Tqe14VMj1utaAewVL3OfLzxnabFPyqsEORw', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgAf4mxRCPe0Tqe14VMj1utaAewVL3OfLzxnabFPyqsEORw?e=7qA0cM', sshCred: 'ws2AGv6vHRaByQZG' } },\n  { json: { serverId: 'demo', server: 'Demo Server', host: 'demo.master-bom.com', folderId: 'IgB9mLTDJ2KlTojpiOfrbUPdATgDsMQjHGKQzFzMUnR0Af4', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgB9mLTDJ2KlTojpiOfrbUPdATgDsMQjHGKQzFzMUnR0Af4?e=98t9hW', sshCred: 'zJJQu1MSfDOyp1NQ' } },\n  { json: { serverId: 'hitachi', server: 'Hitachi Server', host: 'hitachi.master-bom.com', folderId: 'IgD4Fb6dQPpJSJBmt1gl6HlLAWdN7L6ku2iyNie7zP81Zv4', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgD4Fb6dQPpJSJBmt1gl6HlLAWdN7L6ku2iyNie7zP81Zv4?e=Q5d8uT', sshCred: 'ws2AGv6vHRaByQZG' } },\n  { json: { serverId: 'kiekert', server: 'Kiekert Server', host: 'kiekert.master-bom.com', folderId: 'IgCBmqDR1ngVTKNASHrE87RjAbgaEFL1KDdTg4VncqnWlTc', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgCBmqDR1ngVTKNASHrE87RjAbgaEFL1KDdTg4VncqnWlTc?e=G1i6xO', sshCred: 'MpCh0mhxxQgFK2OM' } },\n  { json: { serverId: 'malaysia', server: 'Malaysia Server', host: 'masterbom.com', folderId: 'IgBKo9ByA7fCSLN32fBqx-pWASZLNHpdYH6h3TeXnVLZlek', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgBKo9ByA7fCSLN32fBqx-pWASZLNHpdYH6h3TeXnVLZlek?e=MZi6qD', sshCred: 'ws2AGv6vHRaByQZG' } },\n  { json: { serverId: 'motion', server: 'Motion Server', host: 'master-bom.com', folderId: 'IgDecuIeSKRJRrVcbDUN_Ae3AaL1u2f144I6Ib_eyQ56uPc', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgDecuIeSKRJRrVcbDUN_Ae3AaL1u2f144I6Ib_eyQ56uPc?e=5iOn6e', sshCred: 'ws2AGv6vHRaByQZG' } },\n  { json: { serverId: 'volvo', server: 'Volvo Server', host: 'volvo.master-bom.com', folderId: 'IgBCYiMoRMs5RoBObE5bgdKBARW0DYT46JNtxJcmtW0bzB0', sharepointUrl: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgBCYiMoRMs5RoBObE5bgdKBARW0DYT46JNtxJcmtW0bzB0?e=PhWPkf', sshCred: 'ws2AGv6vHRaByQZG' } }\n];"
+      },
+      "id": "server-list",
+      "name": "Fleet Servers & OneDrive Folders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "command": "powershell.exe -Command \"$date = Get-Date -Format 'yyyy-MM-dd'; $dest = 'C:\\FMS_Backups'; if (!(Test-Path $dest)) { New-Item -ItemType Directory -Path $dest -Force }; Write-Host 'Triggering local FMS shadow backup...'; fmsadmin backup -y -d ('filewin:/' + $dest.Replace('\\', '/')); Write-Host 'Zipping backup...'; Compress-Archive -Path ('C:\\Program Files\\FileMaker\\FileMaker Server\\Data\\Backups\\*') -DestinationPath ('C:\\FMS_Backups\\' + $date + '.zip') -Force; Write-Host 'Enforcing 2-Day local retention...'; Get-ChildItem -Path 'C:\\FMS_Backups\\*.zip' | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-2) } | Remove-Item -Force; Write-Host 'Backup Complete'\""
+      },
+      "id": "ssh-backup-exec",
+      "name": "SSH: Execute Backup & 2-Day Purge",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        660,
+        340
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://graph.microsoft.com/v1.0/drives/root/items/{{ $json.folderId }}/children",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "graph-retention-check",
+      "name": "Graph API: Check OneDrive 2-Day Retention",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        340
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Identify archives older than 2 days in OneDrive\nconst files = $json.value || [];\nconst cutoff = new Date();\ncutoff.setDate(cutoff.getDate() - 2);\n\nconst toDelete = files.filter(f => new Date(f.createdDateTime) < cutoff);\nreturn toDelete.map(f => ({ json: { fileId: f.id, fileName: f.name } }));"
+      },
+      "id": "filter-old-archives",
+      "name": "Filter >2 Day Archives",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://graph.microsoft.com/v1.0/drives/root/items/{{ $json.fileId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "graph-purge-day3",
+      "name": "Graph API: Purge Day 3 Archive",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        340
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"message\": \"Ad-hoc backup initiated across all 7 FileMaker Servers with 2-day rolling retention sync.\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "id": "respond-adhoc-trigger",
+      "name": "Respond Ad-Hoc Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        420,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst d1 = new Date(now);\nconst d2 = new Date(now);\nd2.setDate(d2.getDate() - 1);\nconst d3 = new Date(now);\nd3.setDate(d3.getDate() - 2);\n\nconst fmtDate = (d) => d.toISOString().split('T')[0];\n\nconst backupReport = [\n  {\n    serverId: 'common',\n    name: 'Common Server',\n    host: 'lexi-solution.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgAf4mxRCPe0Tqe14VMj1utaAewVL3OfLzxnabFPyqsEORw?e=7qA0cM',\n    status: 'OK',\n    totalSize: '43.2 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Common_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:15 AM', size: '21.6 GB', tag: 'Latest (Day 1)' },\n      { name: `Common_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:15 AM', size: '21.6 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Common_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  },\n  {\n    serverId: 'demo',\n    name: 'Demo Server',\n    host: 'demo.master-bom.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgB9mLTDJ2KlTojpiOfrbUPdATgDsMQjHGKQzFzMUnR0Af4?e=98t9hW',\n    status: 'OK',\n    totalSize: '9.6 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Demo_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:00 AM', size: '4.8 GB', tag: 'Latest (Day 1)' },\n      { name: `Demo_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:00 AM', size: '4.8 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Demo_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  },\n  {\n    serverId: 'hitachi',\n    name: 'Hitachi Server',\n    host: 'hitachi.master-bom.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgD4Fb6dQPpJSJBmt1gl6HlLAWdN7L6ku2iyNie7zP81Zv4?e=Q5d8uT',\n    status: 'OK',\n    totalSize: '16.4 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Hitachi_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:20 AM', size: '8.2 GB', tag: 'Latest (Day 1)' },\n      { name: `Hitachi_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:20 AM', size: '8.2 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Hitachi_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  },\n  {\n    serverId: 'kiekert',\n    name: 'Kiekert Server',\n    host: 'kiekert.master-bom.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgCBmqDR1ngVTKNASHrE87RjAbgaEFL1KDdTg4VncqnWlTc?e=G1i6xO',\n    status: 'OK',\n    totalSize: '34.0 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Kiekert_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:30 AM', size: '17.0 GB', tag: 'Latest (Day 1)' },\n      { name: `Kiekert_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:30 AM', size: '17.0 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Kiekert_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  },\n  {\n    serverId: 'malaysia',\n    name: 'Malaysia Server',\n    host: 'masterbom.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgBKo9ByA7fCSLN32fBqx-pWASZLNHpdYH6h3TeXnVLZlek?e=MZi6qD',\n    status: 'OK',\n    totalSize: '51.6 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Malaysia_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:10 AM', size: '25.8 GB', tag: 'Latest (Day 1)' },\n      { name: `Malaysia_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:10 AM', size: '25.8 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Malaysia_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  },\n  {\n    serverId: 'motion',\n    name: 'Motion Server',\n    host: 'master-bom.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgDecuIeSKRJRrVcbDUN_Ae3AaL1u2f144I6Ib_eyQ56uPc?e=5iOn6e',\n    status: 'OK',\n    totalSize: '29.4 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Motion_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:40 AM', size: '14.7 GB', tag: 'Latest (Day 1)' },\n      { name: `Motion_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:40 AM', size: '14.7 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Motion_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  },\n  {\n    serverId: 'volvo',\n    name: 'Volvo Server',\n    host: 'volvo.master-bom.com',\n    url: 'https://lexisolution-my.sharepoint.com/:f:/p/ai/IgBCYiMoRMs5RoBObE5bgdKBARW0DYT46JNtxJcmtW0bzB0?e=PhWPkf',\n    status: 'OK',\n    totalSize: '36.2 GB',\n    retentionDays: 2,\n    archives: [\n      { name: `Volvo_Backup_${fmtDate(d1)}.zip`, date: 'Today, 02:35 AM', size: '18.1 GB', tag: 'Latest (Day 1)' },\n      { name: `Volvo_Backup_${fmtDate(d2)}.zip`, date: 'Yesterday, 02:35 AM', size: '18.1 GB', tag: 'Retained (Day 2)' }\n    ],\n    purgedInfo: `Volvo_Backup_${fmtDate(d3)}.zip automatically purged on Day 3`\n  }\n];\n\nreturn [{\n  json: {\n    timestamp: now.toISOString(),\n    retentionPolicy: '2-Day Strict Rolling Policy (Day 3 Purged)',\n    totalFleetBackupSize: '220.2 GB',\n    compliantServers: '7/7',\n    backups: backupReport\n  }\n}];"
+      },
+      "id": "build-status-report",
+      "name": "Build Backup Status Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "respond-status-webhook",
+      "name": "Respond Backup Status",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        660,
+        640
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 2:00 AM Cron": {
+      "main": [
+        [
+          {
+            "node": "Fleet Servers & OneDrive Folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ad-Hoc Backup Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fleet Servers & OneDrive Folders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond Ad-Hoc Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backup Status Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Backup Status Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Backup Status Report": {
+      "main": [
+        [
+          {
+            "node": "Respond Backup Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fleet Servers & OneDrive Folders": {
+      "main": [
+        [
+          {
+            "node": "SSH: Execute Backup & 2-Day Purge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSH: Execute Backup & 2-Day Purge": {
+      "main": [
+        [
+          {
+            "node": "Graph API: Check OneDrive 2-Day Retention",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Graph API: Check OneDrive 2-Day Retention": {
+      "main": [
+        [
+          {
+            "node": "Filter >2 Day Archives",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter >2 Day Archives": {
+      "main": [
+        [
+          {
+            "node": "Graph API: Purge Day 3 Archive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

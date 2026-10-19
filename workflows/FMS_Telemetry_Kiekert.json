@@ -1,0 +1,416 @@
+{
+  "name": "Kiekert Telemetry",
+  "active": true,
+  "isArchived": false,
+  "triggerCount": 3,
+  "nodeCount": 12,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "scopes": [
+    "execution:reveal",
+    "workflow:create",
+    "workflow:delete",
+    "workflow:disableRedaction",
+    "workflow:enableRedaction",
+    "workflow:execute",
+    "workflow:execute-chat",
+    "workflow:export",
+    "workflow:import",
+    "workflow:list",
+    "workflow:move",
+    "workflow:publish",
+    "workflow:read",
+    "workflow:share",
+    "workflow:unpublish",
+    "workflow:unshare",
+    "workflow:update"
+  ],
+  "canExecute": true,
+  "connections": {
+    "1. FMS Admin API Auth": {
+      "main": [
+        [
+          {
+            "node": "2. Get Server Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6. Transform to Dashboard JSON": {
+      "main": [
+        [
+          {
+            "node": "7. Respond to Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Get Server Status": {
+      "main": [
+        [
+          {
+            "node": "3. Get Hosted Databases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Get Hosted Databases": {
+      "main": [
+        [
+          {
+            "node": "4. Get Connected Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Get Connected Users": {
+      "main": [
+        [
+          {
+            "node": "5. Get OS Metrics (SSH)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7. Respond to Dashboard": {
+      "main": [
+        [
+          {
+            "node": "8. Logout Admin API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Get OS Metrics (SSH)": {
+      "main": [
+        [
+          {
+            "node": "6. Transform to Dashboard JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dashboard Webhook (CORS Enabled)": {
+      "main": [
+        [
+          {
+            "node": "1. FMS Admin API Auth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restart Webhook": {
+      "main": [
+        [
+          {
+            "node": "Restart Service via SSH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restart Service via SSH": {
+      "main": [
+        [
+          {
+            "node": "Respond Restart Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://kiekert.master-bom.com/fmi/admin/api/v2/user/auth",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "69f9b2f4-0207-4a48-a4cf-1f88a861e9ef",
+      "name": "1. FMS Admin API Auth",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -416,
+        128
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "url": "=https://kiekert.master-bom.com/fmi/admin/api/v2/server/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.response.token }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "d036e67b-81e0-4848-8f04-aa887fd766be",
+      "name": "2. Get Server Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -192,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://kiekert.master-bom.com/fmi/admin/api/v2/databases",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('1. FMS Admin API Auth').first().json.response.token }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "df63669d-0715-435e-8c03-704db988845f",
+      "name": "3. Get Hosted Databases",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -192,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://kiekert.master-bom.com/fmi/admin/api/v2/clients",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('1. FMS Admin API Auth').first().json.response.token }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "36b24718-15d3-4557-83ac-6ca5dcac0a2a",
+      "name": "4. Get Connected Users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -192,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "command": "try {\n  $cpu = (Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average\n  $os = Get-WmiObject Win32_OperatingSystem\n  $memTotal = [math]::Round($os.TotalVisibleMemorySize / 1024 / 1024, 2)\n  $memFree = [math]::Round($os.FreePhysicalMemory / 1024 / 1024, 2)\n  $memUsed = [math]::Max(0, [math]::Round($memTotal - $memFree, 2))\n  $disk = Get-WmiObject Win32_LogicalDisk -Filter \"DeviceID='C:'\"\n  $diskTotal = [math]::Round($disk.Size / 1073741824, 2)\n  $diskFree = [math]::Round($disk.FreeSpace / 1073741824, 2)\n  $diskUsed = [math]::Max(0, [math]::Round($diskTotal - $diskFree, 2))\n\n  $statsLogPath = \"C:\\\\Program Files\\\\FileMaker\\\\FileMaker Server\\\\Logs\\\\Stats.log\"\n  $topCallPath = \"C:\\\\Program Files\\\\FileMaker\\\\FileMaker Server\\\\Logs\\\\TopCallStats.log\"\n\n  $statsLine = \"\"\n  if (Test-Path $statsLogPath) {\n      $statsLine = (Get-Content -Path $statsLogPath -Tail 1)\n  }\n  $topLine = \"\"\n  if (Test-Path $topCallPath) {\n      $topLine = (Get-Content -Path $topCallPath -Tail 1)\n  }\n\n  $obj = @{\n      cpu = $cpu\n      memTotal = $memTotal\n      memUsed = $memUsed\n      diskTotal = $diskTotal\n      diskUsed = $diskUsed\n      diskFree = $diskFree\n      statsLine = $statsLine\n      topLine = $topLine\n  }\n  $obj | ConvertTo-Json -Compress\n} catch {\n  Write-Output \"{\\\"error\\\": \\\"$($_.Exception.Message)\\\"}\"\n}"
+      },
+      "id": "518b2ccd-bf91-473b-90f0-a6445330f5db",
+      "name": "5. Get OS Metrics (SSH)",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        528
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Finds EXACTLY where latency is coming from",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "jsCode": "const statusData = $('2. Get Server Status').first().json.response || {};\nconst dbData = $('3. Get Hosted Databases').first().json.response || { databases: [] };\nconst clientsData = $('4. Get Connected Users').first().json.response || { clients: [] };\nconst sshOutputStr = $('5. Get OS Metrics (SSH)').first().json.stdout || '{}';\n\nlet sshData = {};\ntry { sshData = JSON.parse(sshOutputStr); } catch (err) { }\n\nlet elapsedCall = 0;\nlet cacheHit = 0;\nlet unsavedCache = 0;\nlet remoteCalls = 0;\nlet ioTime = 0;\nlet netIn = 0;\nlet netOut = 0;\n\nif (sshData.statsLine) {\n   let statsStr = typeof sshData.statsLine === 'string' ? sshData.statsLine : (sshData.statsLine.value || '');\n   const parts = statsStr.split('\\t');\n   if (parts.length >= 12) {\n      netIn = parseFloat(parts[1]) / 1024;\n      netOut = parseFloat(parts[2]) / 1024;\n      unsavedCache = parseFloat(parts[5]);\n      cacheHit = parseFloat(parts[6]);\n      remoteCalls = parseInt(parts[8], 10);\n      elapsedCall = parseFloat(parts[9]);\n      ioTime = parseFloat(parts[11]);\n   }\n}\n\nconst filesFormatted = (dbData.databases || dbData.files || []).map(f => ({\n  name: f.filename || f.name,\n  size: f.size ? `${(f.size / 1073741824).toFixed(2)} GB` : 'N/A',\n  clients: f.clientsCount || f.clients || 0,\n  status: f.status || 'NORMAL'\n}));\n\nconst usersFormatted = (clientsData.clients || []).map(c => {\n  let accountName = 'N/A';\n  let database = 'N/A';\n  let privsetName = '';\n  let allDatabases = [];\n  if (c.guestFiles && c.guestFiles.length > 0) {\n    accountName = c.guestFiles[0].accountName || accountName;\n    database = c.guestFiles[0].filename || database;\n    privsetName = c.guestFiles[0].privsetName || '';\n    allDatabases = [...new Set(c.guestFiles.map(g => g.filename).filter(Boolean))];\n  }\n  return {\n    sessionIdentifier: c.userName || c.id,\n    accountName: accountName,\n    privsetName: privsetName,\n    ipAddress: c.ipaddress || c.computerName || '',\n    computerName: c.computerName || '',\n    connectTime: c.connectTime || '',\n    connectDuration: c.connectDuration || '',\n    clientType: c.appType || c.clientType || 'Unknown',\n    appVersion: c.appVersion || '',\n    operatingSystem: c.operatingSystem || '',\n    database: database,\n    allDatabases: allDatabases\n  };\n});\n\nconst hasSpike = elapsedCall > 20;\nlet latencySource = \"Operating within normal SLA parameters.\";\nif (hasSpike && sshData.topLine) {\n    let topStr = typeof sshData.topLine === 'string' ? sshData.topLine : (sshData.topLine.value || '');\n    if (!topStr.includes('cannot find')) {\n        const parts = topStr.split('\\t');\n        if (parts.length >= 6) {\n            latencySource = `Slow operation detected: ${parts[4] || 'Heavy Operation'} on ${parts[5] || 'Unknown Table'}.`;\n        }\n    }\n}\n\nconst allClientsList = clientsData.clients || [];\nconst payload = {\n  serverHost: 'https://kiekert.master-bom.com',\n  environment: 'Kiekert',\n  timestamp: new Date().toISOString(),\n  metrics: {\n    elapsed: elapsedCall || 0,\n    elapsedThreshold: 20.0,\n    cacheHit: cacheHit || 100,\n    unsavedCache: unsavedCache || 0,\n    remoteCalls: remoteCalls || 0,\n    ioTime: ioTime || 0,\n    sessions: allClientsList.length,\n    sessionsMax: parseInt(statusData.maxConnections || 100, 10),\n    cpu: parseFloat(sshData.cpu || 0).toFixed(1),\n    ramUsed: parseFloat(sshData.memUsed || 0).toFixed(1),\n    ramTotal: parseFloat(sshData.memTotal || 64.0).toFixed(1),\n    diskUsed: parseFloat(sshData.diskUsed || 0).toFixed(1),\n    diskTotal: parseFloat(sshData.diskTotal || 0).toFixed(1),\n    netIn: parseFloat(netIn || 0).toFixed(1),\n    netOut: parseFloat(netOut || 0).toFixed(1),\n    breakdown: {\n      pro: allClientsList.filter(c => (c.appType || c.clientType || '').toLowerCase().includes('pro')).length,\n      web: allClientsList.filter(c => (c.appType || c.clientType || '').toLowerCase().includes('web')).length,\n      go: allClientsList.filter(c => (c.appType || c.clientType || '').toLowerCase().includes('go')).length,\n      api: allClientsList.filter(c => (c.appType || c.clientType || '').toLowerCase().includes('api') || (c.appType || c.clientType || '').toLowerCase().includes('dapi')).length,\n      fmse: allClientsList.filter(c => (c.appType || c.clientType || '').toLowerCase().includes('fmse') || (c.appType || c.clientType || '').toLowerCase().includes('sase') || (c.computerName || '').toLowerCase().includes('script')).length\n    }\n  },\n  alert: {\n    active: hasSpike,\n    title: hasSpike ? `LATENCY SPIKE DETECTED: ${elapsedCall} ms / Call` : 'ALL CLEAR',\n    desc: latencySource\n  },\n  databases: filesFormatted,\n  connectedUsers: usersFormatted\n};\n\nreturn [{ json: payload }];"
+      },
+      "id": "51425466-371b-46f3-8f99-b7860ce6be1e",
+      "name": "6. Transform to Dashboard JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "d8c43d8a-a8fe-49c6-a5c2-a871f80e7d59",
+      "name": "7. Respond to Dashboard",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        288,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "path": "fms-kiekert-dashboard",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7088440e-9cb0-499f-8634-2ff6ba7c18dc",
+      "name": "Dashboard Webhook (CORS Enabled)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        128
+      ],
+      "webhookId": "kiekert-dashboard"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://kiekert.master-bom.com/fmi/admin/api/v2/user/auth/{{ $('1. FMS Admin API Auth').first().json.response.token }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('1. FMS Admin API Auth').first().json.response.token }}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "d6807a29-af92-4ed7-99eb-3cf98ac3a641",
+      "name": "8. Logout Admin API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        480,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "command": "=fmsadmin restart {{ $json.body.service }} -y"
+      },
+      "id": "ssh-restart-fms",
+      "name": "Restart Service via SSH",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        272,
+        512
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fms-kiekert-restart",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "id": "webhook-restart-fms",
+      "name": "Restart Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        64,
+        512
+      ],
+      "webhookId": "kiekert-restart"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"service\": \"{{ $('Restart Webhook').first().json.body.service }}\",\n  \"output\": \"{{ $json.stdout }}\"\n}",
+        "options": {}
+      },
+      "id": "respond-restart-fms",
+      "name": "Respond Restart Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        432,
+        512
+      ]
+    }
+  ],
+  "nodeGroups": [],
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  }
+}
