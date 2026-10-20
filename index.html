@@ -690,11 +690,11 @@
 
     <!-- MAIN EXECUTIVE TABS (Arranged per user request: 1 -> 2 -> 3 -> 4) -->
     <div class="main-nav-tabs">
-      <button class="nav-tab-btn active" id="tabBtnWau" onclick="switchView('wau')">
-        1. 📈 Weekly Trends &amp; Peak Hour Distribution
+      <button class="nav-tab-btn active" id="tabBtnClientTrends" onclick="switchView('clientTrends')">
+        1. 📈 Client Weekly Trends
       </button>
-      <button class="nav-tab-btn" id="tabBtnUsers" onclick="switchView('users')">
-        2. 👤 User Intelligence: Client vs Internal
+      <button class="nav-tab-btn" id="tabBtnInternalTrends" onclick="switchView('internalTrends')">
+        2. 👥 Internal Weekly Trends
       </button>
       <button class="nav-tab-btn" id="tabBtnSystems" onclick="switchView('systems')">
         3. 📊 Heavy Systems &amp; Database Usage (Code Names)
@@ -706,34 +706,34 @@
 
     <!-- HERO METRIC CARDS (Arranged 1 -> 2 -> 3 -> 4) -->
     <div class="hero-grid">
-      <!-- 1. Weekly Active Users -->
-      <div class="hero-card green">
+      <!-- 1. Client Weekly Trends -->
+      <div class="hero-card" style="border-top-color: #38bdf8;">
         <div class="hero-title">
-          <span>Weekly Active Users (WAU)</span>
-          <span>👥</span>
+          <span>Client Active Traffic (WAU)</span>
+          <span>📈</span>
         </div>
-        <div class="hero-val" style="color: var(--green);" id="heroWauCount">142 Users</div>
-        <div class="hero-sub">68% Client Customers &bull; 32% Lexi Internal Team</div>
+        <div class="hero-val" style="color: #38bdf8;" id="heroClientWau">96 Clients</div>
+        <div class="hero-sub">Peak: <strong>52 Concurrent</strong> &bull; 68% Fleet Share</div>
       </div>
 
-      <!-- 2. Top Heavy System Code Name -->
+      <!-- 2. Internal Staff Weekly Activity -->
       <div class="hero-card purple">
         <div class="hero-title">
-          <span>Top Heavy System (Code Name)</span>
-          <span>🔥</span>
+          <span>Internal Staff Operations</span>
+          <span>👥</span>
         </div>
-        <div class="hero-val" style="font-size: 20px; color: var(--purple);" id="heroTopSystem">KH97LBST88JEW</div>
-        <div class="hero-sub" id="heroTopSystemSub">17 Active Staff &bull; 100% Internal System (Malaysia)</div>
+        <div class="hero-val" style="color: var(--purple);" id="heroInternalWau">46 Staff</div>
+        <div class="hero-sub">Top System: <strong>KH97LBST88JEW</strong> (17 Staff)</div>
       </div>
 
-      <!-- 3. Avg Active Session Duration -->
+      <!-- 3. Top Heavy Client Database -->
       <div class="hero-card amber">
         <div class="hero-title">
-          <span>Avg. Active Session Duration</span>
-          <span>⏱️</span>
+          <span>Top Heavy Client Database</span>
+          <span>🔥</span>
         </div>
-        <div class="hero-val" style="color: var(--amber);">2h 45m</div>
-        <div class="hero-sub">0 Runaway Scripts &bull; All Sessions Healthy</div>
+        <div class="hero-val" style="font-size: 20px; color: var(--amber);" id="heroTopSystem">B450AM27543R</div>
+        <div class="hero-sub" id="heroTopSystemSub">Motion Server &bull; 7 Active Clients</div>
       </div>
 
       <!-- 4. OneDrive Cloud Backup Retention -->
@@ -819,87 +819,23 @@
     </section>
 
     <!-- =========================================================================
-         VIEW 3: USER INTELLIGENCE: CLIENT VS INTERNAL
+         VIEW 1: CLIENT WEEKLY TRENDS & HEAVY USER BREAKDOWN
          ========================================================================= -->
-    <section id="viewUsers" style="display: none;">
+    <section id="viewClientTrends" style="display: block;">
       <div class="section-header">
         <div>
-          <h2 class="section-title">👤 User Intelligence &amp; Heavy User Breakdown</h2>
-          <div class="section-desc">Classified against company directory &bull; Distinguishing external paying clients from Lexi Solution internal operations.</div>
+          <h2 class="section-title">📈 1. Client Weekly Trends &amp; Intelligence</h2>
+          <div class="section-desc">External customer usage analytics, peak concurrency distribution, and heavy client activity across the fleet.</div>
         </div>
       </div>
 
-      <div class="user-analytics-grid">
-        <!-- DONUT CHART BREAKDOWN -->
-        <div class="donut-card">
-          <h3 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700; width: 100%;">Fleet User Composition</h3>
-          <div style="position: relative; width: 220px; height: 220px; margin: 10px 0;">
-            <canvas id="userDonutChart"></canvas>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 14px; font-size: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="display: flex; align-items: center; gap: 6px;"><span class="user-type-tag tag-client">CLIENT</span> External Customers</span>
-              <strong id="donutClientCount" style="color: #3b82f6;">34 (68%)</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="display: flex; align-items: center; gap: 6px;"><span class="user-type-tag tag-internal">INTERNAL</span> Lexi Solution Staff</span>
-              <strong id="donutInternalCount" style="color: #8b5cf6;">14 (28%)</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="display: flex; align-items: center; gap: 6px;"><span class="user-type-tag tag-fmse">FMSE</span> Server Automation</span>
-              <strong id="donutFmseCount" style="color: #94a3b8;">2 (4%)</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- TOP HEAVY USERS LEADERBOARD -->
-        <div class="systems-table-card">
-          <div class="table-controls">
-            <div style="font-weight: 700; font-size: 13px; color: var(--text);">🏆 Top Heavy Users Leaderboard</div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="filterUserTable('all')">All</button>
-              <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="filterUserTable('client')">Clients Only</button>
-              <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="filterUserTable('internal')">Internal Only</button>
-            </div>
-          </div>
-
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>User Account</th>
-                <th>Type</th>
-                <th>System Code Name</th>
-                <th>Server</th>
-                <th>Client Platform</th>
-                <th>Active Duration</th>
-              </tr>
-            </thead>
-            <tbody id="heavyUsersTableBody">
-              <!-- Dynamically rendered -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================================
-         VIEW 1 (USER #1): WEEKLY ACTIVE USERS & SEPARATE CLIENT / INTERNAL CHARTS
-         ========================================================================= -->
-    <section id="viewWau" style="display: block;">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">📈 Weekly Trends &amp; Peak Hour Distribution</h2>
-          <div class="section-desc">Independent analytics separating <strong>Client Customers (External)</strong> from <strong>Internal Staff (Lexi Solution)</strong>.</div>
-        </div>
-      </div>
-
-      <!-- PART 1: CLIENT USERS (CLIENT FIRST) -->
+      <!-- External Client Customers Card -->
       <div style="background: var(--card-bg); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 16px;">🏢</div>
             <div>
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #38bdf8;">1. External Client Customers Activity</h3>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #38bdf8;">External Client Customers Activity</h3>
               <div style="font-size: 12px; color: var(--text-muted);">Real-world customer production traffic across all 7 FileMaker servers</div>
             </div>
           </div>
@@ -916,7 +852,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 24px;">
           <!-- Client Chart 1: 7-Day Trend -->
           <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px;">
             <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #38bdf8;">📅 Client Users 7-Day Volume Trend</h4>
@@ -934,14 +870,14 @@
           </div>
         </div>
 
-        <!-- TOP 10 DATABASES CLIENT USE (REQUESTED) -->
-        <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px;">
+        <!-- TOP 10 DATABASES CLIENT USE -->
+        <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <div style="font-weight: 700; font-size: 14px; color: #38bdf8; display: flex; align-items: center; gap: 8px;">
               <span>🏆 Top 10 Databases Client Use</span>
               <span class="user-type-tag tag-client">Verified External Clients</span>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">Ranked by concurrent paying customer sessions</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Ranked by concurrent paying customer sessions (Utility dbs excluded)</div>
           </div>
           <table class="data-table">
             <thead>
@@ -959,16 +895,88 @@
             </tbody>
           </table>
         </div>
+
+        <!-- HEAVY USER BREAKDOWN (UNDER TOP 10 CLIENT DATABASE USE AS REQUESTED) -->
+        <div style="margin-top: 24px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+          <div style="margin-bottom: 14px;">
+            <h3 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700; color: #38bdf8;">👤 Heavy User Breakdown &amp; Fleet Composition</h3>
+            <div style="font-size: 12px; color: var(--text-muted);">Session duration, platform breakdown, and concurrent heavy users</div>
+          </div>
+
+          <div class="user-analytics-grid">
+            <!-- DONUT CHART BREAKDOWN -->
+            <div class="donut-card">
+              <h3 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 700; width: 100%;">Fleet User Composition</h3>
+              <div style="position: relative; width: 220px; height: 220px; margin: 10px auto;">
+                <canvas id="userDonutChart"></canvas>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 14px; font-size: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="display: flex; align-items: center; gap: 6px;"><span class="user-type-tag tag-client">CLIENT</span> External Customers</span>
+                  <strong id="donutClientCount" style="color: #3b82f6;">34 (68%)</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="display: flex; align-items: center; gap: 6px;"><span class="user-type-tag tag-internal">INTERNAL</span> Lexi Solution Staff</span>
+                  <strong id="donutInternalCount" style="color: #8b5cf6;">14 (28%)</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="display: flex; align-items: center; gap: 6px;"><span class="user-type-tag tag-fmse">FMSE</span> Server Automation</span>
+                  <strong id="donutFmseCount" style="color: #94a3b8;">2 (4%)</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOP HEAVY USERS LEADERBOARD -->
+            <div class="systems-table-card">
+              <div class="table-controls">
+                <div style="font-weight: 700; font-size: 13px; color: var(--text);">🏆 Top Heavy Users Leaderboard</div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="filterUserTable('all')">All</button>
+                  <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="filterUserTable('client')">Clients Only</button>
+                  <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="filterUserTable('internal')">Internal Only</button>
+                </div>
+              </div>
+
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>User Account</th>
+                    <th>Type</th>
+                    <th>System Code Name</th>
+                    <th>Server</th>
+                    <th>Client Platform</th>
+                    <th>Active Duration</th>
+                  </tr>
+                </thead>
+                <tbody id="heavyUsersTableBody">
+                  <!-- Dynamically rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         VIEW 2: INTERNAL WEEKLY TRENDS & STAFF ACTIVITY
+         ========================================================================= -->
+    <section id="viewInternalTrends" style="display: none;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">👥 2. Internal Weekly Trends &amp; Staff Intelligence</h2>
+          <div class="section-desc">Lexi Solution employee activity, engineering maintenance patterns, and internal company operations.</div>
+        </div>
       </div>
 
-      <!-- PART 2: INTERNAL STAFF (INTERNAL SECOND) -->
-      <div style="background: var(--card-bg); border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 14px; padding: 22px; box-shadow: var(--shadow);">
+      <div style="background: var(--card-bg); border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(139, 92, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #8b5cf6; font-size: 16px;">👥</div>
             <div>
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #a78bfa;">2. Lexi Solution Internal Staff Activity</h3>
-              <div style="font-size: 12px; color: var(--text-muted);">Internal company maintenance, script management &amp; data operations</div>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #a78bfa;">Lexi Solution Internal Staff Operations</h3>
+              <div style="font-size: 12px; color: var(--text-muted);">Engineering maintenance, script management &amp; core company systems</div>
             </div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -984,7 +992,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 24px;">
           <!-- Internal Chart 1: 7-Day Trend -->
           <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px;">
             <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #a78bfa;">📅 Internal Staff 7-Day Volume Trend</h4>
@@ -1001,8 +1009,59 @@
             </div>
           </div>
         </div>
+
+        <!-- PRIMARY INTERNAL SYSTEMS MATRIX -->
+        <div style="background: var(--card-surface); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="font-weight: 700; font-size: 14px; color: #a78bfa; display: flex; align-items: center; gap: 8px;">
+              <span>🛠️ Top Internal Heavy Systems</span>
+              <span class="user-type-tag tag-internal">100% Lexi Solution Staff</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Systems dedicated to company operations and support</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 40px;">Rank</th>
+                <th>System Code Name</th>
+                <th>Host Server</th>
+                <th>Active Staff Sessions</th>
+                <th>Staff Classification</th>
+                <th>Storage Size</th>
+              </tr>
+            </thead>
+            <tbody id="topInternalDbsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- INTERNAL STAFF ROSTER / ACTIVE SESSIONS LEADERBOARD -->
+        <div class="systems-table-card">
+          <div class="table-controls">
+            <div style="font-weight: 700; font-size: 13px; color: #a78bfa;">👥 Active Lexi Solution Staff Sessions</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Verified against master employee directory</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Staff Account</th>
+                <th>Department / Tag</th>
+                <th>System Code Name</th>
+                <th>Host Server</th>
+                <th>Platform</th>
+                <th>Session Duration</th>
+              </tr>
+            </thead>
+            <tbody id="internalStaffTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </section>
+</section>
 
   </div>
 
@@ -1237,16 +1296,31 @@
        ========================================================================== */
     function switchView(view) {
       currentView = view;
-      ['backup', 'systems', 'users', 'wau'].forEach(v => {
-        const btn = document.getElementById('tabBtn' + v.charAt(0).toUpperCase() + v.slice(1));
-        const sec = document.getElementById('view' + v.charAt(0).toUpperCase() + v.slice(1));
-        if (btn) btn.classList.toggle('active', v === view);
-        if (sec) sec.style.display = (v === view) ? 'block' : 'none';
+      const viewMap = {
+        'clientTrends': { btn: 'tabBtnClientTrends', sec: 'viewClientTrends' },
+        'internalTrends': { btn: 'tabBtnInternalTrends', sec: 'viewInternalTrends' },
+        'systems': { btn: 'tabBtnSystems', sec: 'viewSystems' },
+        'backup': { btn: 'tabBtnBackup', sec: 'viewBackup' }
+      };
+
+      Object.keys(viewMap).forEach(k => {
+        const item = viewMap[k];
+        const btn = document.getElementById(item.btn);
+        const sec = document.getElementById(item.sec);
+        if (btn) btn.classList.toggle('active', k === view);
+        if (sec) sec.style.display = (k === view) ? 'block' : 'none';
       });
 
-      if (view === 'systems') renderSystemsMatrix();
-      if (view === 'users') renderUserAnalytics();
-      if (view === 'wau') renderWauCharts();
+      if (view === 'clientTrends') {
+        renderClientTrends();
+        renderUserAnalytics();
+      } else if (view === 'internalTrends') {
+        renderInternalTrends();
+      } else if (view === 'systems') {
+        renderSystemsMatrix();
+      } else if (view === 'backup') {
+        renderBackupCards();
+      }
     }
 
     /* ==========================================================================
@@ -1573,14 +1647,14 @@
     }
 
     /* ==========================================================================
-       SECTION 1 (USER #1): SEPARATE CLIENT AND INTERNAL CHARTS & HEATMAPS
+       SECTION 1: CLIENT WEEKLY TRENDS & INTELLIGENCE
        ========================================================================== */
     let clientWeeklyInstance = null;
     let clientPeakInstance = null;
     let internalWeeklyInstance = null;
     let internalPeakInstance = null;
 
-    function renderWauCharts() {
+    function renderClientTrends() {
       const isLight = currentTheme === 'light';
       const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
       const textColor = isLight ? '#64748b' : '#94a3b8';
@@ -1642,7 +1716,19 @@
         });
       }
 
-      // 3. INTERNAL STAFF - 7-DAY TREND (PURPLE)
+      // Populate Top 10 Client Databases
+      renderTopClientDatabases();
+    }
+
+    /* ==========================================================================
+       SECTION 2: INTERNAL WEEKLY TRENDS & STAFF ACTIVITY
+       ========================================================================== */
+    function renderInternalTrends() {
+      const isLight = currentTheme === 'light';
+      const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+      const textColor = isLight ? '#64748b' : '#94a3b8';
+
+      // 1. INTERNAL STAFF - 7-DAY TREND (PURPLE)
       const ctxIntW = document.getElementById('internalWeeklyChart');
       if (ctxIntW) {
         if (internalWeeklyInstance) internalWeeklyInstance.destroy();
@@ -1669,8 +1755,90 @@
         });
       }
 
-      // 5. POPULATE TOP 10 DATABASES CLIENT USE (EXCLUDING INTERNAL-ONLY LIKE KH97LBST88JEW)
-      renderTopClientDatabases();
+      // 2. INTERNAL STAFF - PEAK HOUR HEATMAP (PURPLE / VIOLET)
+      const ctxIntP = document.getElementById('internalPeakChart');
+      if (ctxIntP) {
+        if (internalPeakInstance) internalPeakInstance.destroy();
+        internalPeakInstance = new Chart(ctxIntP, {
+          type: 'line',
+          data: {
+            labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+            datasets: [{
+              label: 'Concurrent Staff',
+              data: [5, 12, 16, 15, 10, 11, 17, 17, 16, 9, 5],
+              borderColor: '#a855f7',
+              backgroundColor: 'rgba(168, 85, 247, 0.15)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2.5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: 'Active Staff', color: textColor } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // Populate Top Internal Heavy Systems and Active Staff Roster
+      renderTopInternalDatabases();
+      renderInternalStaffRoster();
+    }
+
+    function renderTopInternalDatabases() {
+      const tbody = document.getElementById('topInternalDbsTableBody');
+      if (!tbody) return;
+
+      const internalDbs = [
+        { rank: 1, code: 'KH97LBST88JEW', server: 'Malaysia Server', staff: 17, classification: '100% Lexi Internal Staff (Malaysia)', size: '24.2 GB' },
+        { rank: 2, code: 'Hitachi_BOM', server: 'Hitachi Server', staff: 2, classification: '100% Internal Maintenance', size: '8.4 GB' },
+        { rank: 3, code: 'Common_Core', server: 'Common Server', staff: 3, classification: '75% Internal Operations', size: '21.6 GB' }
+      ];
+
+      tbody.innerHTML = internalDbs.map(d => `
+        <tr>
+          <td><strong style="color: #a78bfa;">#${d.rank}</strong></td>
+          <td><span style="font-family: monospace; font-weight: 700; color: #a78bfa;">🛠️ ${d.code}</span></td>
+          <td><span class="server-badge">${d.server}</span></td>
+          <td><strong style="color: var(--text); font-size: 14px;">${d.staff}</strong> <span style="font-size: 11px; color: var(--text-muted);">staff active</span></td>
+          <td><span class="user-type-tag tag-internal">${d.classification}</span></td>
+          <td style="font-family: monospace; color: var(--text-secondary);">${d.size}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderInternalStaffRoster() {
+      const tbody = document.getElementById('internalStaffTableBody');
+      if (!tbody) return;
+
+      const staffList = [
+        { name: 'Subhash Paramasivam', role: 'Staff Engineer (MY)', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'FileMaker Pro', duration: '3h 10m' },
+        { name: 'LC Tan', role: 'Operations Lead (MY)', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'WebDirect', duration: '2h 45m' },
+        { name: 'Dennis Visalan', role: 'Solutions Architect', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'FileMaker Pro', duration: '2h 20m' },
+        { name: 'Ashana Menon', role: 'Operations & Support', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'WebDirect', duration: '2h 15m' },
+        { name: 'Shakina Zaki', role: 'Technical Support', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'FileMaker Pro', duration: '1h 50m' },
+        { name: 'admin.it@lexisolution.com', role: 'Fleet SysAdmin', system: 'MasterBOM_PROD', server: 'Hitachi Server', platform: 'FileMaker Pro', duration: '2h 40m' },
+        { name: 'Vino Chandra', role: 'Engineering Staff', system: '33AVOLCE3322R', server: 'Volvo Server', platform: 'FileMaker Pro', duration: '2h 15m' },
+        { name: 'Sharif Razif', role: 'Systems Support', system: 'B450AM27543R', server: 'Motion Server', platform: 'FileMaker Pro', duration: '1h 55m' },
+        { name: 'Farrah Wei', role: 'Accounts & Operations', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'WebDirect', duration: '1h 30m' },
+        { name: 'Steve Yem', role: 'Dev Team Engineer', system: 'KH97LBST88JEW', server: 'Malaysia Server', platform: 'WebDirect', duration: '1h 25m' }
+      ];
+
+      tbody.innerHTML = staffList.map(s => `
+        <tr>
+          <td><strong style="color: var(--text);">${s.name}</strong></td>
+          <td><span class="user-type-tag tag-internal">${s.role}</span></td>
+          <td><span style="font-family: monospace; color: #a78bfa; font-weight: 600;">🛠️ ${s.system}</span></td>
+          <td><span class="server-badge">${s.server}</span></td>
+          <td><span style="font-size: 11px; color: var(--text-muted);">${s.platform}</span></td>
+          <td><strong style="color: #f59e0b;">⏱️ ${s.duration}</strong></td>
+        </tr>
+      `).join('');
     }
 
     function renderTopClientDatabases() {
@@ -1754,35 +1922,7 @@
         `;
       }).join('');
     
-      // 4. INTERNAL STAFF - PEAK HOUR HEATMAP (PURPLE / VIOLET)
-      const ctxIntP = document.getElementById('internalPeakChart');
-      if (ctxIntP) {
-        if (internalPeakInstance) internalPeakInstance.destroy();
-        internalPeakInstance = new Chart(ctxIntP, {
-          type: 'line',
-          data: {
-            labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-            datasets: [{
-              label: 'Concurrent Staff',
-              data: [5, 12, 16, 15, 10, 11, 17, 17, 16, 9, 5],
-              borderColor: '#a855f7',
-              backgroundColor: 'rgba(168, 85, 247, 0.15)',
-              fill: true,
-              tension: 0.35,
-              borderWidth: 2.5
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: { grid: { color: gridColor }, ticks: { color: textColor } },
-              y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: 'Active Staff', color: textColor } }
-            },
-            plugins: { legend: { display: false } }
-          }
-        });
-      }
+
     }
 
     /* ==========================================================================
@@ -1828,7 +1968,8 @@
 
     // Initialize
     applyTheme(currentTheme);
-    renderWauCharts();
+    renderClientTrends();
+    renderUserAnalytics();
     renderBackupCards();
     pollAll();
     setInterval(pollAll, 15000);
