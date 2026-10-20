@@ -1157,6 +1157,26 @@
     let currentView = 'wau';
     let currentTheme = localStorage.getItem('fms_theme') || 'dark';
 
+        /* ==========================================================================
+       EXCLUDED SYSTEMS (Executive Exclusion: Do not show under client or internal)
+       ========================================================================== */
+    const EXCLUDED_SYSTEMS = new Set([
+      'le88lsf25huwq',
+      'kh43cws55wsk',
+      'passwordgenerator',
+      'lexisso',
+      'sso'
+    ]);
+
+    function isExcludedSystem(name) {
+      if (!name) return false;
+      const clean = String(name).trim().toLowerCase()
+        .replace(/\.fmp12$/i, '')
+        .replace(/\.fp7$/i, '')
+        .replace(/[^a-z0-9]/g, '');
+      return EXCLUDED_SYSTEMS.has(clean);
+    }
+
     /* ==========================================================================
        USER CLASSIFICATION
        ========================================================================== */
@@ -1342,8 +1362,9 @@
 
         dbs.forEach(d => {
           const codeName = getSystemCodeName(d.name || d.filename);
+          if (isExcludedSystem(codeName) || isExcludedSystem(d.name)) return; // Excluded system
           // Count users on this DB
-          const dbUsers = users.filter(u => getSystemCodeName(u.database) === codeName || u.database === d.name);
+          const dbUsers = users.filter(u => (getSystemCodeName(u.database) === codeName || u.database === d.name) && !isExcludedSystem(u.database));
           const clientCount = dbUsers.filter(u => classifyUser(u).category === 'client').length;
           const intCount = dbUsers.filter(u => classifyUser(u).category === 'internal').length;
           const totalUsers = Math.max(parseInt(d.clients || 0, 10), dbUsers.length);
@@ -1389,7 +1410,7 @@
       // Sort by total users descending (Heavy systems first!)
       allDbs.sort((a, b) => b.totalUsers - a.totalUsers);
 
-      const filtered = allDbs.filter(d => !q || d.name.toLowerCase().includes(q) || d.serverName.toLowerCase().includes(q));
+      const filtered = allDbs.filter(d => !isExcludedSystem(d.codeName) && !isExcludedSystem(d.rawName) && (!q || (d.codeName || '').toLowerCase().includes(q) || (d.rawName || '').toLowerCase().includes(q) || (d.serverName || '').toLowerCase().includes(q)));
 
       if (filtered.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 24px;">No matching systems found.</td></tr>';
@@ -1450,6 +1471,7 @@
       servers.forEach(s => {
         const users = fleetLiveState[s.id]?.connectedUsers || [];
         users.forEach(u => {
+          if (isExcludedSystem(u.database)) return; // Excluded system: do not show under client or internal
           allClients.push({ ...u, serverId: s.id, serverName: s.name });
         });
       });
@@ -1511,6 +1533,7 @@
       if (!tbody) return;
 
       const filteredUsers = allClients.filter(c => {
+        if (isExcludedSystem(c.database)) return false;
         const cls = classifyUser(c);
         if (userFilter === 'client' && cls.category !== 'client') return false;
         if (userFilter === 'internal' && cls.category !== 'internal') return false;
@@ -1663,8 +1686,9 @@
 
         dbs.forEach(d => {
           const code = getSystemCodeName(d.name || d.filename);
+          if (isExcludedSystem(code) || isExcludedSystem(d.name)) return; // Excluded from client rankings
           // Check users connected
-          const matchingUsers = users.filter(u => getSystemCodeName(u.database) === code || (u.allDatabases && u.allDatabases.some(ad => getSystemCodeName(ad) === code)));
+          const matchingUsers = users.filter(u => (getSystemCodeName(u.database) === code || (u.allDatabases && u.allDatabases.some(ad => getSystemCodeName(ad) === code))) && !isExcludedSystem(u.database));
           const clientCount = matchingUsers.filter(u => classifyUser(u).category === 'client').length;
           const intCount = matchingUsers.filter(u => classifyUser(u).category === 'internal').length;
 
@@ -1685,22 +1709,23 @@
         });
       });
 
-      // Accurate client production databases
+      // Accurate client production databases (100% genuine external clients, strictly excluding utility/excluded systems)
       const fallbackClientDbs = [
-        { code: 'LE88LSF25HUWQ', serverName: 'Common Server', size: '0.01 GB', clientCount: 8, intCount: 1, total: 9 },
         { code: 'B450AM27543R', serverName: 'Motion Server', size: '0.77 GB', clientCount: 7, intCount: 2, total: 9 },
         { code: '33AVOLCE3322R', serverName: 'Volvo Server', size: '18.1 GB', clientCount: 6, intCount: 2, total: 8 },
+        { code: 'D730DE40738P', serverName: 'Common Server', size: '3.31 GB', clientCount: 6, intCount: 1, total: 7 },
         { code: 'B973AM83566P', serverName: 'Motion Server', size: '8.73 GB', clientCount: 5, intCount: 1, total: 6 },
-        { code: 'D730DE40738P', serverName: 'Common Server', size: '3.30 GB', clientCount: 4, intCount: 1, total: 5 },
-        { code: 'D817DE83551R', serverName: 'Common Server', size: '0.42 GB', clientCount: 4, intCount: 0, total: 4 },
-        { code: 'I388HI00207SANP', serverName: 'Common Server', size: '2.06 GB', clientCount: 3, intCount: 0, total: 3 },
-        { code: 'S346AA76453P', serverName: 'Common Server', size: '5.84 GB', clientCount: 3, intCount: 1, total: 4 },
-        { code: 'KH43CWS55WSK', serverName: 'Common Server', size: '0.01 GB', clientCount: 2, intCount: 2, total: 4 },
-        { code: '3242SAB200P', serverName: 'Common Server', size: '0.25 GB', clientCount: 2, intCount: 0, total: 2 }
+        { code: 'D817DE83551R', serverName: 'Common Server', size: '0.40 GB', clientCount: 4, intCount: 0, total: 4 },
+        { code: 'I388HI00207SANP', serverName: 'Common Server', size: '2.07 GB', clientCount: 4, intCount: 0, total: 4 },
+        { code: 'S346AA76453P', serverName: 'Common Server', size: '5.87 GB', clientCount: 3, intCount: 1, total: 4 },
+        { code: '3242SAB200P', serverName: 'Common Server', size: '0.47 GB', clientCount: 2, intCount: 0, total: 2 },
+        { code: '32K4SAB12R', serverName: 'Common Server', size: '0.47 GB', clientCount: 2, intCount: 0, total: 2 },
+        { code: 'S3KK12AA129R', serverName: 'Common Server', size: '0.74 GB', clientCount: 2, intCount: 0, total: 2 }
       ];
 
-      let list = Object.values(clientDbMap).filter(d => d.clientCount > 0);
+      let list = Object.values(clientDbMap).filter(d => d.clientCount > 0 && !isExcludedSystem(d.code));
       if (list.length < 5) list = fallbackClientDbs;
+      list = list.filter(d => !isExcludedSystem(d.code));
 
       // Sort by actual CLIENT users descending!
       list.sort((a, b) => b.clientCount - a.clientCount);
