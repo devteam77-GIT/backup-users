@@ -741,6 +741,10 @@
       <button class="btn" onclick="pollBackupStatus()" title="Refresh OneDrive Status">
         <span>Sync Status</span>
       </button>
+      <button class="btn" style="border-color: #ef4444; color: #f87171;" onclick="openFleetRestartModal()" title="Restart FMS Services (WPE, FMSE, Admin Server)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+        <span>Restart Service</span>
+      </button>
       <button class="btn" onclick="toggleTheme()" id="themeBtn">
         <span id="themeIcon" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Theme</span>
       </button>
@@ -2047,5 +2051,156 @@
     pollAll();
     setInterval(pollAll, 15000);
   </script>
+
+  <!-- FLEET SERVICE RESTART MODAL (WPE / FMSE / Admin Server) -->
+  <div class="modal-overlay" id="fleetRestartModal" onclick="if(event.target===this) closeFleetRestartModal()" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 9999;">
+    <div style="background: var(--card-bg, #0f172a); border: 1px solid var(--border, #334155); border-radius: 12px; width: 92%; max-width: 490px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); color: var(--text, #f8fafc);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="margin: 0; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #f87171;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+          Restart FileMaker Service
+        </h3>
+        <button onclick="closeFleetRestartModal()" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="font-size: 12px; color: var(--text-muted, #94a3b8); margin-bottom: 16px; line-height: 1.5;">
+        Execute remote service recovery via SSH and n8n webhook. Use when WebDirect / WPE crashes, scripts freeze, or the Admin Server stops responding.
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 5px;">Target Server</label>
+          <select id="modalRestartServer" style="width: 100%; padding: 8px 12px; background: var(--surface-bg, #0b1120); border: 1px solid var(--border, #334155); color: var(--text, #f8fafc); border-radius: 6px; font-size: 13px;">
+            <option value="hitachi">Hitachi Server (hitachi.master-bom.com)</option>
+            <option value="common">Common Server (lexi-solution.com)</option>
+            <option value="malaysia">Malaysia Server (masterbom.com)</option>
+            <option value="motion">Motion Server (master-bom.com)</option>
+            <option value="volvo">Volvo Server (volvo.master-bom.com)</option>
+            <option value="kiekert">Kiekert Server (kiekert.master-bom.com)</option>
+            <option value="demo">Demo Server (demo.master-bom.com)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 5px;">Service to Restart</label>
+          <select id="modalRestartService" style="width: 100%; padding: 8px 12px; background: var(--surface-bg, #0b1120); border: 1px solid var(--border, #334155); color: var(--text, #f8fafc); border-radius: 6px; font-size: 13px;">
+            <option value="wpe">WPE (Web Publishing Engine / WebDirect) — fmsadmin restart wpe -y</option>
+            <option value="fmse">FMSE (FileMaker Script Engine) — fmsadmin restart fmse -y</option>
+            <option value="adminserver">Admin Server — fmsadmin restart adminserver -y</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted, #94a3b8); margin-bottom: 5px;">Authorization Password</label>
+          <input type="password" id="modalRestartPwd" placeholder="Enter Admin Password..." style="width: 100%; padding: 8px 12px; background: var(--surface-bg, #0b1120); border: 1px solid var(--border, #334155); color: var(--text, #f8fafc); border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div id="modalRestartMsg" style="display: none; padding: 10px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 16px; white-space: pre-wrap;"></div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button onclick="closeFleetRestartModal()" style="padding: 8px 16px; background: transparent; border: 1px solid var(--border, #334155); color: var(--text, #f8fafc); border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">Cancel</button>
+        <button id="btnExecuteRestart" onclick="submitFleetRestart()" style="padding: 8px 18px; background: #ef4444; border: 1px solid #dc2626; color: #fff; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+          <span>Execute Restart</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FLEET_RESTART_WEBHOOKS = {
+      common: 'https://fms.n8n.lexisolution.com/webhook/fms-common-restart',
+      malaysia: 'https://fms.n8n.lexisolution.com/webhook/fms-malaysia-restart',
+      motion: 'https://fms.n8n.lexisolution.com/webhook/fms-motion-restart',
+      volvo: 'https://fms.n8n.lexisolution.com/webhook/fms-volvo-restart',
+      hitachi: 'https://fms.n8n.lexisolution.com/webhook/fms-service-restart',
+      kiekert: 'https://fms.n8n.lexisolution.com/webhook/fms-kiekert-restart',
+      demo: 'https://fms.n8n.lexisolution.com/webhook/fms-demo-restart'
+    };
+
+    function openFleetRestartModal(presetServer = null, presetService = 'wpe') {
+      const modal = document.getElementById('fleetRestartModal');
+      if (!modal) return;
+      if (presetServer) document.getElementById('modalRestartServer').value = presetServer;
+      if (presetService) document.getElementById('modalRestartService').value = presetService;
+      document.getElementById('modalRestartPwd').value = '';
+      const msg = document.getElementById('modalRestartMsg');
+      msg.style.display = 'none';
+      modal.style.display = 'flex';
+    }
+
+    function closeFleetRestartModal() {
+      const modal = document.getElementById('fleetRestartModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function submitFleetRestart() {
+      const srv = document.getElementById('modalRestartServer').value;
+      const svc = document.getElementById('modalRestartService').value;
+      const pwd = document.getElementById('modalRestartPwd').value;
+      const msg = document.getElementById('modalRestartMsg');
+      const btn = document.getElementById('btnExecuteRestart');
+
+      if (pwd !== 'MasterBOM2026') {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(239, 68, 68, 0.15)';
+        msg.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+        msg.style.color = '#f87171';
+        msg.innerText = 'Unauthorized: Incorrect Admin Password.';
+        return;
+      }
+
+      const webhook = FLEET_RESTART_WEBHOOKS[srv];
+      if (!webhook) {
+        alert('Unknown server restart endpoint.');
+        return;
+      }
+
+      let svcName = svc.toUpperCase();
+      if (svc === 'wpe') svcName = 'WPE (Web Publishing Engine)';
+      else if (svc === 'fmse') svcName = 'FMSE (Script Engine)';
+      else if (svc === 'adminserver') svcName = 'Admin Server';
+
+      if (!confirm(`Confirm hard-restart of '${svcName}' on '${srv.toUpperCase()}'?\n\nThis will execute: fmsadmin restart ${svc} -y`)) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Restarting...';
+      msg.style.display = 'block';
+      msg.style.background = 'rgba(56, 189, 248, 0.15)';
+      msg.style.border = '1px solid rgba(56, 189, 248, 0.4)';
+      msg.style.color = '#38bdf8';
+      msg.innerText = `Dispatching command: fmsadmin restart ${svc} -y to ${srv.toUpperCase()}...`;
+
+      try {
+        const res = await fetch(webhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ service: svc })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          msg.style.background = 'rgba(16, 185, 129, 0.15)';
+          msg.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+          msg.style.color = '#34d399';
+          msg.innerText = `✅ Successfully restarted ${svcName} on ${srv.toUpperCase()}!\n${data.output || 'Command finished successfully.'}`;
+        } else {
+          msg.style.background = 'rgba(239, 68, 68, 0.15)';
+          msg.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          msg.style.color = '#f87171';
+          msg.innerText = `❌ Failed to restart ${svcName}. HTTP ${res.status}`;
+        }
+      } catch (err) {
+        msg.style.background = 'rgba(239, 68, 68, 0.15)';
+        msg.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+        msg.style.color = '#f87171';
+        msg.innerText = `Network error triggering restart: ${err.message}`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Execute Restart';
+      }
+    }
+  </script>
+
 </body>
 </html>
